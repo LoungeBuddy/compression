@@ -17,10 +17,6 @@ Not supported:
 
 TODO: NPM PACKAGE
 
-```bash
-$ npm install compression
-```
-
 ## API
 
 <!-- eslint-disable no-unused-vars -->
