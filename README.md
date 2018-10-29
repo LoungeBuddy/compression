@@ -1,22 +1,21 @@
 # compression
 
-[![NPM Version][npm-image]][npm-url]
-[![NPM Downloads][downloads-image]][downloads-url]
-[![Build Status][travis-image]][travis-url]
-[![Test Coverage][coveralls-image]][coveralls-url]
-
 Node.js compression middleware.
 
 The following compression codings are supported:
 
+  - brotli (faster and higher compression ratio than gzip)
+    - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
+    - https://hacks.mozilla.org/2015/11/better-than-gzip-compression-with-brotli/
   - deflate
   - gzip
 
+Not supported:
+  - Middle-out
+
 ## Install
 
-This is a [Node.js](https://nodejs.org/en/) module available through the
-[npm registry](https://www.npmjs.com/). Installation is done using the
-[`npm install` command](https://docs.npmjs.com/getting-started/installing-npm-packages-locally):
+TODO: NPM PACKAGE
 
 ```bash
 $ npm install compression

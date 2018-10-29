@@ -15,6 +15,7 @@
  */
 
 var accepts = require('accepts')
+var brotli = require('iltorb')
 var Buffer = require('safe-buffer').Buffer
 var bytes = require('bytes')
 var compressible = require('compressible')
@@ -52,9 +53,15 @@ function compression (options) {
   var filter = opts.filter || shouldCompress
   var threshold = bytes.parse(opts.threshold)
 
+  var brotliOpts = opts.brotli || {}
+  brotliOpts.quality = brotliOpts.quality || BROTLI_DEFAULT_QUALITY
+
   if (threshold == null) {
     threshold = 1024
   }
+
+  var dummyBrotliFlush = function () { }
+  var BROTLI_DEFAULT_QUALITY = 4
 
   return function compression (req, res, next) {
     var ended = false
@@ -175,7 +182,7 @@ function compression (options) {
 
       // compression method
       var accept = accepts(req)
-      var method = accept.encoding(['gzip', 'deflate', 'identity'])
+      var method = accept.encoding(['br', 'gzip', 'deflate', 'identity'])
 
       // we really don't prefer deflate
       if (method === 'deflate' && accept.encoding(['gzip'])) {
@@ -190,9 +197,19 @@ function compression (options) {
 
       // compression stream
       debug('%s compression', method)
-      stream = method === 'gzip'
-        ? zlib.createGzip(opts)
-        : zlib.createDeflate(opts)
+      switch (method) {
+        case 'br':
+          stream = brotli.compressStream(brotliOpts)
+          // brotli has no flush method. add a dummy flush method here.
+          stream.flush = dummyBrotliFlush
+          break
+        case 'gzip':
+          stream = zlib.createGzip(opts)
+          break
+        case 'deflate':
+          stream = zlib.createDeflate(opts)
+          break
+      }
 
       // add buffered listeners to stream
       addListeners(stream, stream.on, listeners)
