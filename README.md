@@ -4,7 +4,7 @@ Node.js compression middleware.
 
 The following compression codings are supported:
 
-  - brotli (faster and higher compression ratio than gzip)
+  - brotli (faster and higher compression ratio than gzip) (default level 4)
     - https://blogs.akamai.com/2016/02/understanding-brotlis-potential.html
     - https://hacks.mozilla.org/2015/11/better-than-gzip-compression-with-brotli/
   - deflate
