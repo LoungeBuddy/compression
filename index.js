@@ -15,7 +15,6 @@
  */
 
 var accepts = require('accepts')
-var brotli = require('iltorb')
 var Buffer = require('safe-buffer').Buffer
 var bytes = require('bytes')
 var compressible = require('compressible')
@@ -53,15 +52,9 @@ function compression (options) {
   var filter = opts.filter || shouldCompress
   var threshold = bytes.parse(opts.threshold)
 
-  var brotliOpts = opts.brotli || {}
-  brotliOpts.quality = brotliOpts.quality || BROTLI_DEFAULT_QUALITY
-
   if (threshold == null) {
     threshold = 1024
   }
-
-  var dummyBrotliFlush = function () { }
-  var BROTLI_DEFAULT_QUALITY = 4
 
   return function compression (req, res, next) {
     var ended = false
@@ -199,9 +192,9 @@ function compression (options) {
       debug('%s compression', method)
       switch (method) {
         case 'br':
-          stream = brotli.compressStream(brotliOpts)
-          // brotli has no flush method. add a dummy flush method here.
-          stream.flush = dummyBrotliFlush
+          // force full flush for Brotli, otherwise we see a huge performance impact
+          opts.flush = zlib.constants.Z_FULL_FLUSH
+          stream = zlib.createBrotliCompress(opts)
           break
         case 'gzip':
           stream = zlib.createGzip(opts)
